@@ -27,7 +27,11 @@ import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
+import LinearProgress from '@mui/material/LinearProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 //
+
+import {request_post, request_get} from '../config'
 import USERLIST from '../_mocks_/user';
 
 
@@ -49,43 +53,33 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
-const icon = (
-  <Paper sx={{ m: 1 }} elevation={4}>
-    <Box component="form" sx={{ width: 600, height: 200, paddingLeft: 5, paddingRight: 5, paddingTop: 2 }}>
-      <h4>Ajout d'une table</h4>
-      <br/>
-      <TextField id="outlined-basic" label="Nom" variant="outlined" style={{width: '47%'}} />
-      <TextField type="number" id="outlined-basic" label="Capacité" variant="outlined" style={{width: '47%', marginLeft: '2%'}} />
 
-      <Button
-          variant="contained"
-          component={RouterLink}
-          to="#"
-          style={{marginTop: 10}}
-          onClick={()=>{
-              // if(!showTable){
-              //     setShowHeigh(350); 
-              //     setShowTable(true)
-              // }else{
-              //     setShowTable(false)
-              //     setShowHeigh(0)
-              // }
-          }}
-          //startIcon={<Icon icon={plusFill} />}
-        >
-          Enregistrer
-      </Button>
-
-    </Box>
-  </Paper>
-);
 
 function Form(props) {
   const [checked, setChecked] = React.useState(false);
 
+  const [name, setName] = React.useState("");
+  const [q, setQ] = React.useState(1);
+
+  const [loanding, setLoand] = React.useState(false);
+
   const handleChange = () => {
     setChecked((prev) => !prev);
   };
+
+  async function onSaveTable(){
+    try {
+      setLoand(true)
+      const result = await request_post("tables", {name: name, capacity: parseInt(q)})
+      setName('')
+      setQ(1)
+      setLoand(false)
+      props.reload()
+    } catch (error) {
+      setLoand(false)
+      console.log('error ==', error)
+    }
+  }
 
   return (
     <Box sx={{ height: props.heigh }}>
@@ -100,7 +94,51 @@ function Form(props) {
         }}
       >
         <div>
-          <Collapse in={props.showTable}>{icon}</Collapse>
+          <Collapse in={props.showTable}>
+            <Paper sx={{ m: 1 }} elevation={4}>
+              <Box component="form" sx={{ width: 600, height: 200, paddingLeft: 5, paddingRight: 5, paddingTop: 2 }}>
+                <h4>Ajout d'une table</h4>
+                <br/>
+                <TextField 
+                  id="outlined-basic" 
+                  label="Nom" 
+                  variant="outlined" 
+                  style={{width: '47%'}} 
+                  value={name}
+                  onChange={(e)=>setName(e.target.value)}
+                />
+                <TextField 
+                  type="number" 
+                  id="outlined-basic" 
+                  label="Capacité" 
+                  variant="outlined" 
+                  style={{width: '47%', marginLeft: '2%'}} 
+                  value={q}
+                  onChange={(e)=>setQ(e.target.value)}
+                />
+
+                {/* <Box sx={{ width: '100%' }}>
+                  <LinearProgress />
+                </Box> */}
+
+                <Button
+                    variant="contained"
+                    component={RouterLink}
+                    to="#"
+                    style={{marginTop: 10}}
+                    onClick={()=>{
+                        onSaveTable()
+                    }}
+                    disabled={loanding}
+                    //startIcon={<Icon icon={plusFill} />}
+                  >
+                    {loanding && <CircularProgress  size={20} />}
+                    Enregistrer
+                </Button>
+
+              </Box>
+            </Paper>
+          </Collapse>
         </div>
       </Box>
     </Box>
@@ -146,6 +184,30 @@ export default function User() {
 
   const [showTable, setShowTable] = useState(false);
   const [heigh, setShowHeigh] = useState(0);
+  const [tableLoad, setTableLoad] = useState(true);
+  const [tables, setTables] = useState([]);
+
+  React.useEffect(function(){
+    onReload()
+  }, [])
+
+  async function onReload(){
+    try {
+      setShowTable(false)
+      setShowHeigh(0)
+      setTableLoad(true)
+      const tables = await request_get('tables')
+      setTableLoad(false)
+      if(tables&&tables['hydra:member']){
+        let t = tables['hydra:member']
+        setTables(t)
+      }
+      console.log('tables tables tables tables', tables['hydra:member'])
+    } catch (error) {
+      console.log('error fetching table >>', error)
+      setTableLoad(false)  
+    }
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -155,7 +217,7 @@ export default function User() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = tables.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -193,11 +255,11 @@ export default function User() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tables.length) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(tables, getComparator(order, orderBy), filterName);
 
-  const isUserNotFound = filteredUsers.length === 0;
+  const isUserNotFound = tables.length === 0;
 
   return (
     <Page title="Liste de tables">
@@ -207,7 +269,7 @@ export default function User() {
             Tables
           </Typography>
 
-          <Form heigh={heigh} showTable={showTable}/>
+          <Form heigh={heigh} showTable={showTable} reload={onReload}/>
           <Button
             variant="contained"
             component={RouterLink}
@@ -241,17 +303,17 @@ export default function User() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={tables.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers
+                  {!tableLoad && tables.reverse()
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                      const isItemSelected = selected.indexOf(name) !== -1;
+                      const { id, name, role, status, capacity, avatarUrl, isVerified } = row;
+                      const isItemSelected = selected.indexOf(id) !== -1;
 
                       return (
                         <TableRow
@@ -265,10 +327,10 @@ export default function User() {
                           <TableCell padding="checkbox">
                             <Checkbox
                               checked={isItemSelected}
-                              onChange={(event) => handleClick(event, name)}
+                              onChange={(event) => handleClick(event, id)}
                             />
                           </TableCell>
-                          <TableCell component="th" scope="row" padding="none">
+                          <TableCell component="th" scope="row" padding="center">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               {/* <Avatar alt={name} src={avatarUrl} /> */}
                               <Typography variant="subtitle2" noWrap>
@@ -276,13 +338,15 @@ export default function User() {
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell align="left">{company}</TableCell>
+                          <TableCell align="left">{capacity}</TableCell>
                           <TableCell align="left">
                             <Label
                               variant="ghost"
                               color={(status === 'banned' && 'error') || 'success'}
                             >
-                              {sentenceCase(status)}
+                              {"Activé"
+                              // sentenceCase(status)
+                              }
                             </Label>
                           </TableCell>
 
@@ -298,11 +362,22 @@ export default function User() {
                     </TableRow>
                   )}
                 </TableBody>
-                {isUserNotFound && (
+                {!tableLoad && isUserNotFound && (
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
                         <SearchNotFound searchQuery={filterName} />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                )}
+                {tableLoad && (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                        <Box sx={{ width: '50%', margin: 'auto' }}>
+                          <LinearProgress />
+                        </Box>
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -314,7 +389,7 @@ export default function User() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={tables.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

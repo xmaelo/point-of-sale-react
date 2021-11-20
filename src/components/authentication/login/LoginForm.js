@@ -39,12 +39,14 @@ export default function LoginForm() {
         const obx = {username: obj.email, password: obj.password}
         
         console.log('first obx', obx)
-        const res = await request_post("login", obx)
+        const res = await request_post("login", obx, true)
         const data = jwt_decode(res.token)
         console.log('first obx', data)
         dispatch({type: "SAVE_HEADER", token: "Bearer "+res.token})
 
-        const users = await request_get("users?username="+data.username, "Bearer "+res.token)
+        const users = await request_get("users?username="+data.username)
+        
+        console.log('users users users', users)
         
         if(users&&users['hydra:member']&&users['hydra:member'][0]){
             const user = users['hydra:member'][0]

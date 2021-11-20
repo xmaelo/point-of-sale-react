@@ -5,6 +5,9 @@ import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
+import {request_post, request_get, request_post_with_picture} from '../config'
+import LinearProgress from '@mui/material/LinearProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 // material
 import {
   Card,
@@ -55,66 +58,74 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 
-const icon = (
-    <Paper sx={{ m: 1 }} elevation={4}>
-      <Box component="form" sx={{ width: 600, height: 340, paddingLeft: 5, paddingRight: 5, paddingTop: 2 }}>
-        <h4>Nouveau consommable</h4>
-        <br/>
-        <TextField id="outlined-basic" label="Nom" variant="outlined" style={{width: '47%'}} />
-        <TextField type="number" id="outlined-basic" label="Prix" variant="outlined" style={{width: '47%', marginLeft: '2%'}} />
-
-        <TextField
-          id="outlined-select-currency"
-          select
-          label="Type de consommable"
-          style={{width: '47%', marginTop: 15}}
-        //   value={currency}
-        //   onChange={handleChange}
-        //   helperText="Selection du type de consommable"
-        >
-            <MenuItem  value={'fruit'}>
-              {'Fruit'}
-            </MenuItem>
-            <MenuItem  value={'repas'}>
-              {'Repas'}
-            </MenuItem>
-            <MenuItem  value={'boisson'}>
-              {'Boisson'}
-            </MenuItem>
-        </TextField>
-        <TextField type="file" id="outlined-basic" label="Photo" variant="outlined" style={{width: '47%', marginLeft: '2%', marginTop: 15}} />
-
-        <TextField id="outlined-basic" multiline minRows={2} label="Description" variant="outlined" style={{width: '96%', marginTop: 15}} />
-
-        <Button
-            variant="contained"
-            component={RouterLink}
-            to="#"
-            style={{marginTop: 10}}
-            onClick={()=>{
-                // if(!showTable){
-                //     setShowHeigh(350); 
-                //     setShowTable(true)
-                // }else{
-                //     setShowTable(false)
-                //     setShowHeigh(0)
-                // }
-            }}
-            //startIcon={<Icon icon={plusFill} />}
-          >
-            Enregistrer
-        </Button>
-
-      </Box>
-    </Paper>
-  );
-
 function Form(props) {
     const [checked, setChecked] = React.useState(false);
   
+    const [loanding, setLoand] = React.useState(false);
+
+    const [price, setPrice] = React.useState(0);
+    const [name, setName] = React.useState("");
+    const [description, setDescription] = React.useState("");
+    const [typeConsommable, setType] = React.useState(0);
+    const [picture, setPath] = React.useState("");
+    const [listTyp, setTypesObx] = React.useState([]);
+    const [file, setFile] = React.useState([]);
+
+    React.useEffect(function(){
+      onGetTypeCOnsommable()
+    }, [])
+
+
+    async function onGetTypeCOnsommable(){
+      try {
+        const result =  await request_get('type_consommables')
+        console.log('result result result', result)
+        if(result&&result['hydra:member']){
+          setTypesObx(result['hydra:member'])
+        }
+      } catch (error) {
+        console.log('error fetching TypeConso', error)
+      }
+    }
     const handleChange = () => {
       setChecked((prev) => !prev);
     };
+
+    const onChangeFile = (event) => {
+      console.log(event.target.files[0])
+      //console.log(event.target.name)
+      setFile(event.target.files[0])
+      //setPath(event.target.name)
+    }
+
+    async function onSaveMenu(){
+      try {
+        console.log('file file file file', file)
+        const formData = new FormData();
+        formData.append("file", file, file.name);
+
+        formData.append("name", name)
+        formData.append("description", description)
+        formData.append("price", parseFloat(price))
+        formData.append("typeConsommable", typeConsommable)
+        formData.append("activated", true)
+        
+
+
+        setLoand(true)
+        const result = await request_post_with_picture("consommables", formData)
+        console.log('result result result', result)
+        setName('')
+        setPrice(0)
+        setDescription("")
+        setFile(null)
+        setLoand(false)
+        props.reload()
+      } catch (error) {
+        console.log('error ==', error)
+        setLoand(false)
+      }
+    }
   
     return (
       <Box sx={{ height: props.heigh }}>
@@ -123,13 +134,88 @@ function Form(props) {
             '& > :not(style)': {
               display: 'flex',
               justifyContent: 'space-around',
-              height: 320,
+              height: 220,
               width: 250,
             },
           }}
         >
           <div>
-            <Collapse in={props.showTable}>{icon}</Collapse>
+            <Collapse in={props.showTable}>
+              <Paper sx={{ m: 1 }} elevation={4}>
+                <Box component="form" sx={{ width: 600, height: 370, paddingLeft: 5, paddingRight: 5, paddingTop: 2 }}>
+                  <h4>Nouveau consommable</h4>
+                  <br/>
+                  <TextField 
+                    id="outlined-basic" 
+                    label="Nom" 
+                    variant="outlined" 
+                    style={{width: '47%'}} 
+                    value={name}
+                    onChange={(e)=>setName(e.target.value)}
+                  />
+                  <TextField 
+                    type="number" 
+                    id="outlined-basic" 
+                    label="Prix" 
+                    variant="outlined" 
+                    style={{width: '47%', marginLeft: '2%'}} 
+                    value={price}
+                    onChange={(e)=>setPrice(e.target.value)}
+                  />
+
+                  <TextField
+                    id="outlined-select-currency"
+                    select
+                    label="Type de consommable"
+                    style={{width: '47%', marginTop: 15}}
+                    value={typeConsommable}
+                    onChange={(e)=>setType(e.target.value)}
+                    helperText="Selection du type de consommable"
+                  >
+                    {listTyp&&listTyp.map((row, k) =>
+                      <MenuItem  value={row['id']} key={k}>
+                        {row.name}
+                      </MenuItem>
+                    )}
+                  </TextField>
+                  <TextField 
+                    type="file" 
+                    id="outlined-basic" 
+                    label="Photo" 
+                    variant="outlined" 
+                    style={{width: '47%', marginLeft: '2%', marginTop: 15}} 
+                    onChange={onChangeFile}
+                  />
+
+                  <TextField 
+                    id="outlined-basic" 
+                    multiline
+                    minRows={2} 
+                    label="Description" 
+                    variant="outlined" 
+                    style={{width: '96%', marginTop: 15}} 
+                    value={description}
+                    onChange={(e)=>setDescription(e.target.value)}
+                  />
+
+                  <Button
+                      variant="contained"
+                      component={RouterLink}
+                      to="#"
+                      style={{marginTop: 10}}
+                      onClick={()=>{
+                          onSaveMenu()
+                      }}
+                      disabled={loanding}
+                      //startIcon={<Icon icon={plusFill} />}
+                    >
+                      {loanding && <CircularProgress  size={20} />}
+                      Enregistrer
+                  </Button>
+
+                </Box>
+              </Paper>
+            </Collapse>
           </div>
         </Box>
       </Box>
@@ -174,6 +260,31 @@ export default function Menu() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [showTable, setShowTable] = useState(false);
   const [heigh, setShowHeigh] = useState(0);
+  const [tableLoad, setTableLoad] = useState(true);
+  const [tables, setTables] = useState([]);
+
+  React.useEffect(function(){
+    onReload()
+  }, [])
+
+  async function onReload(){
+    try {
+      setShowTable(false)
+      setShowHeigh(0)
+      setTableLoad(true)
+      const tables = await request_get('consommables')
+      setTableLoad(false)
+      if(tables&&tables['hydra:member']){
+        let t = tables['hydra:member']
+        setTables(t)
+      }
+      console.log('tables tables tables tables', tables['hydra:member'])
+    } catch (error) {
+      console.log('error fetching table >>', error)
+      setTableLoad(false)  
+    }
+  }
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -183,18 +294,18 @@ export default function Menu() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = tables.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -221,9 +332,9 @@ export default function Menu() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tables.length) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(tables, getComparator(order, orderBy), filterName);
 
   const isUserNotFound = filteredUsers.length === 0;
 
@@ -236,14 +347,14 @@ export default function Menu() {
           <Typography variant="h4" gutterBottom>
             Consommables
           </Typography>
-        <Form heigh={heigh} showTable={showTable}/>
+        <Form heigh={heigh} showTable={showTable} reload={onReload}/>
           <Button
             variant="contained"
             component={RouterLink}
             to="#"
             onClick={()=>{
                 if(!showTable){
-                    setShowHeigh(350); 
+                    setShowHeigh(370); 
                     setShowTable(true)
                 }else{
                     setShowTable(false)
@@ -270,16 +381,16 @@ export default function Menu() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={tables.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers
+                  {!tableLoad && tables.reverse()
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                      const { id, name, activated, price, picture, description, typeConsommable } = row;
                       const isItemSelected = selected.indexOf(name) !== -1;
 
                       return (
@@ -294,26 +405,26 @@ export default function Menu() {
                           <TableCell padding="checkbox">
                             <Checkbox
                               checked={isItemSelected}
-                              onChange={(event) => handleClick(event, name)}
+                              onChange={(event) => handleClick(event, id)}
                             />
                           </TableCell>
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
-                              <Avatar alt={name} src={require('../asssets/img/p.jpg').default} />
+                              <Avatar alt={name} src={picture} />
                               <Typography variant="subtitle2" noWrap>
                                 {name}
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell align="left">{300}</TableCell>
-                          <TableCell align="left">{role}</TableCell>
-                          <TableCell align="left">{'Repas'}</TableCell>
+                          <TableCell align="left">{price+ ' FCFA'}</TableCell>
+                          <TableCell align="left">{description}</TableCell>
+                          <TableCell align="left">{typeConsommable && typeConsommable.name}</TableCell>
                           <TableCell align="left">
                             <Label
                               variant="ghost"
-                              color={(status === 'banned' && 'error') || 'success'}
+                              color={(activated && 'success') || 'error'}
                             >
-                              {sentenceCase(status)}
+                              {activated ? "Activé" : "Désactivé"}
                             </Label>
                           </TableCell>
 
@@ -329,11 +440,23 @@ export default function Menu() {
                     </TableRow>
                   )}
                 </TableBody>
-                {isUserNotFound && (
+                {!tableLoad && isUserNotFound && (
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
                         <SearchNotFound searchQuery={filterName} />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                )}
+
+                {tableLoad && (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                        <Box sx={{ width: '50%', margin: 'auto' }}>
+                          <LinearProgress />
+                        </Box>
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -345,7 +468,7 @@ export default function Menu() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={tables.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
