@@ -108,21 +108,21 @@ export default function ShopProductCard({ product }) {
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           {/* <ColorPreview colors={colors} /> */}
-            <Typography variant="subtitle1">
-              <Typography
-                component="span"
-                variant="body1"
-                sx={{
-                  color: 'text.disabled',
-                  // textDecoration: 'line-through'
-                }}
-              >
-                {price}
-              </Typography>
-              &nbsp;
-              FCFA
+          <Typography variant="subtitle1">
+            <Typography
+              component="span"
+              variant="body1"
+              sx={{
+                color: 'text.disabled',
+                // textDecoration: 'line-through'
+              }}
+            >
+              100
             </Typography>
-            <OrderMoreMenu order={product} />
+            &nbsp;
+            FCFA
+          </Typography>
+            <OrderMoreMenu />
         </Stack>
       </Stack>
     </Card>

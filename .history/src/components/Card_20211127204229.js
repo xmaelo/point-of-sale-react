@@ -5,8 +5,6 @@ import {
     TextField,
   } from '@mui/material';
 
-  import {imageBase} from '../config'
-
 export default function Card({row, changedQ}) {
     const [quantity, setQ] = React.useState(1);
 
@@ -18,9 +16,9 @@ export default function Card({row, changedQ}) {
     <Paper elevation={3} >
         <div style={{display: "flex"}}>
             <div style={{width: '20%'}}>
-                <img src={imageBase+row.picture} alt=""/>
+                <img src="http://localhost:8000/uploads/Capture-61991399e20d8.png" alt=""/>
             </div>
-            <div  style={{width: '75%', marginLeft: '5%'}}>
+            <div  style={{width: '80%'}}>
                 <h4>{row.name}{' - '}{row.typeConsommable.name} {' - '} {row.price+ " FCFA"}</h4>
                 <p>
                     {row.description}

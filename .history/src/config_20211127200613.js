@@ -52,10 +52,10 @@ export function request_post(path, body, header){
 }
 export function request_patch(path, body, header){
     const r = fetch(endpoint+path, {
-         method: 'PATCH',
+         method: 'POST',
          headers: {
           'authorization': !header? 'Bearer '+store.getState().header : null,
-          'Content-Type': 'application/merge-patch+json'
+          'Content-Type': 'application/json'
       },
       body: JSON.stringify(body)
     }).then(

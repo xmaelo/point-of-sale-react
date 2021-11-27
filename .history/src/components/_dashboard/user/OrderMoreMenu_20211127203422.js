@@ -18,8 +18,6 @@ export default function OrderMoreMenu({order}) {
 
   const socket = useSelector(p =>p.socket)
 
-  const [lond, setL] = useState({})
-
   async function onLoadTask(task){
     try {
       const result =  await request_get('order_states?page=1&task_name='+task)
@@ -34,15 +32,11 @@ export default function OrderMoreMenu({order}) {
 
   async function patch(task_name){
     try {
-      const l = {[task_name]: true}
-      setL(l)
       const task = await onLoadTask(task_name)
       const res = await request_patch("commandes/"+order.id, {status: task['@id']})
       await socket.send(JSON.stringify(res))
       console.log('res res res patch', res)
       await onOrder(res)
-      setL({})
-      setIsOpen(false)
     } catch (error) {
       console.log('error cathing', error)
     }
@@ -66,7 +60,7 @@ export default function OrderMoreMenu({order}) {
       >
         <MenuItem sx={{ color: 'text.secondary' }} onClick={()=>patch('archive')}>
           <ListItemIcon>
-          {lond['archive'] ? <CircularProgress  size={20} />
+          {true ? <CircularProgress  size={20} />
             :
             <Icon icon={trash2Outline} width={24} height={24} />
           }
@@ -76,10 +70,7 @@ export default function OrderMoreMenu({order}) {
 
         <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }} onClick={()=>patch('livre')}>
           <ListItemIcon>
-          {lond['livre'] ? <CircularProgress  size={20} />
-            :
             <Icon icon={editFill} width={24} height={24} />
-          }
           </ListItemIcon>
           <ListItemText primary="Pret a livrer" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>

@@ -117,12 +117,12 @@ export default function ShopProductCard({ product }) {
                   // textDecoration: 'line-through'
                 }}
               >
-                {price}
+                100
               </Typography>
               &nbsp;
               FCFA
             </Typography>
-            <OrderMoreMenu order={product} />
+            <OrderMoreMenu />
         </Stack>
       </Stack>
     </Card>

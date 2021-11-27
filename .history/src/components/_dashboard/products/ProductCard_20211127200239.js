@@ -17,7 +17,7 @@ import {imageBase} from '../../../config'
 import Label from '../../Label';
 import ColorPreview from '../../ColorPreview';
 
-import { OrderMoreMenu } from '../user';
+import {  order={product} } from '../user';
 import React from 'react';
 
 // ----------------------------------------------------------------------

@@ -7,18 +7,12 @@ import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
 import { request_patch, onOrder, request_get } from '../../../config';
-import { useSelector } from 'react-redux';
-import CircularProgress from '@mui/material/CircularProgress';
 
 // ----------------------------------------------------------------------
 
 export default function OrderMoreMenu({order}) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-
-  const socket = useSelector(p =>p.socket)
-
-  const [lond, setL] = useState({})
 
   async function onLoadTask(task){
     try {
@@ -34,15 +28,10 @@ export default function OrderMoreMenu({order}) {
 
   async function patch(task_name){
     try {
-      const l = {[task_name]: true}
-      setL(l)
       const task = await onLoadTask(task_name)
       const res = await request_patch("commandes/"+order.id, {status: task['@id']})
-      await socket.send(JSON.stringify(res))
       console.log('res res res patch', res)
       await onOrder(res)
-      setL({})
-      setIsOpen(false)
     } catch (error) {
       console.log('error cathing', error)
     }
@@ -64,26 +53,20 @@ export default function OrderMoreMenu({order}) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }} onClick={()=>patch('archive')}>
+        <MenuItem sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
-          {lond['archive'] ? <CircularProgress  size={20} />
-            :
             <Icon icon={trash2Outline} width={24} height={24} />
-          }
           </ListItemIcon>
           <ListItemText primary="Archiver" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
         <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }} onClick={()=>patch('livre')}>
           <ListItemIcon>
-          {lond['livre'] ? <CircularProgress  size={20} />
-            :
             <Icon icon={editFill} width={24} height={24} />
-          }
           </ListItemIcon>
           <ListItemText primary="Pret a livrer" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
-
+        
         <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />

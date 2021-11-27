@@ -20,7 +20,7 @@ export default function Card({row, changedQ}) {
             <div style={{width: '20%'}}>
                 <img src={imageBase+row.picture} alt=""/>
             </div>
-            <div  style={{width: '75%', marginLeft: '5%'}}>
+            <div  style={{width: '80%'}}>
                 <h4>{row.name}{' - '}{row.typeConsommable.name} {' - '} {row.price+ " FCFA"}</h4>
                 <p>
                     {row.description}

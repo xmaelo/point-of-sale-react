@@ -57,8 +57,8 @@ export default function ShopProductCard({ product }) {
   function renderDescript(consommabes){
     return(
       <Typography>
-        {consommabes&&consommabes.map((c, i) => 
-           <span key={c.id}>{(i+1)+": "+c.description} <br/> </span>
+        {consommabes&&consommabes.map(c => 
+           <span key={c.id}>{c.description} <br/> </span>
         )}
         {consommabes.length > 1 &&
             <span onClick={() =>setShowMore(!showMore)} style={{color: "blue", cursor: 'pointer'}} >Voir moins</span>
@@ -107,22 +107,22 @@ export default function ShopProductCard({ product }) {
               
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          {/* <ColorPreview colors={colors} /> */}
-            <Typography variant="subtitle1">
-              <Typography
-                component="span"
-                variant="body1"
-                sx={{
-                  color: 'text.disabled',
-                  // textDecoration: 'line-through'
-                }}
-              >
-                {price}
-              </Typography>
-              &nbsp;
-              FCFA
+          <ColorPreview colors={colors} />
+          <Typography variant="subtitle1">
+            <OrderMoreMenu />
+            {/* <Typography
+              component="span"
+              variant="body1"
+              sx={{
+                color: 'text.disabled',
+                textDecoration: 'line-through'
+              }}
+            >
+              {priceSale && fCurrency(priceSale)}
             </Typography>
-            <OrderMoreMenu order={product} />
+            &nbsp;
+            {fCurrency(price)} */}
+          </Typography>
         </Stack>
       </Stack>
     </Card>

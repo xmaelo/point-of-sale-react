@@ -18,7 +18,6 @@ import Label from '../../Label';
 import ColorPreview from '../../ColorPreview';
 
 import { OrderMoreMenu } from '../user';
-import React from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -36,11 +35,9 @@ ShopProductCard.propTypes = {
   product: PropTypes.object
 };
 
-
 export default function ShopProductCard({ product }) {
   const { cover, consommabes, status, quantity, price } = product;
 
-  const [showMore, setShowMore] = React.useState(false)
   let name = ""
   let description = ""
   console.log('consommabes&consommabes[0].picture', consommabes)
@@ -53,19 +50,6 @@ export default function ShopProductCard({ product }) {
       description = description + "\n" +c.description
     }
   })
-
-  function renderDescript(consommabes){
-    return(
-      <Typography>
-        {consommabes&&consommabes.map((c, i) => 
-           <span key={c.id}>{(i+1)+": "+c.description} <br/> </span>
-        )}
-        {consommabes.length > 1 &&
-            <span onClick={() =>setShowMore(!showMore)} style={{color: "blue", cursor: 'pointer'}} >Voir moins</span>
-          }
-      </Typography>
-    ) 
-  }
   const colors = ['#00AB55']
   return (
     <Card>
@@ -90,39 +74,41 @@ export default function ShopProductCard({ product }) {
 
       <Stack spacing={2} sx={{ p: 3 }}>
 
-        <Typography variant="subtitle2" noWrap>
-          {name} {" ("+quantity+")"}
-        </Typography>
-        {!showMore?
-          <Typography>
-            {consommabes&&consommabes.length>0&&consommabes[0].description}
-            <br/>
-            {consommabes.length > 1 &&
-              <span onClick={() =>setShowMore(!showMore)} style={{color: "blue", cursor: 'pointer'}} >Voir plus</span>
-            }
-          </Typography> 
-          :
-          renderDescript(consommabes)
-        }
-              
+        <Accordion style={{width: "500px"}}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+          <Typography variant="subtitle2" noWrap>
+          {name} {" (fois "+quantity+")"}
+          </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography>
+              {description}
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
+            
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          {/* <ColorPreview colors={colors} /> */}
-            <Typography variant="subtitle1">
-              <Typography
-                component="span"
-                variant="body1"
-                sx={{
-                  color: 'text.disabled',
-                  // textDecoration: 'line-through'
-                }}
-              >
-                {price}
-              </Typography>
-              &nbsp;
-              FCFA
+          <ColorPreview colors={colors} />
+          <Typography variant="subtitle1">
+            <OrderMoreMenu />
+            {/* <Typography
+              component="span"
+              variant="body1"
+              sx={{
+                color: 'text.disabled',
+                textDecoration: 'line-through'
+              }}
+            >
+              {priceSale && fCurrency(priceSale)}
             </Typography>
-            <OrderMoreMenu order={product} />
+            &nbsp;
+            {fCurrency(price)} */}
+          </Typography>
         </Stack>
       </Stack>
     </Card>

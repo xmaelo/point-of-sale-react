@@ -41,26 +41,16 @@ export default function store(state = defaultState, action) {
       return state_;
     case 'NEW_ORDER':
       const order = action.order
-      let orders4 = [...state.orders]
-      let newT = []
+      const orders4 = [...state.orders]
+
       if(orders4.length === 0){
         orders4.push(order)
       }
       else if(!orders4.find(elt => elt.id === order.id)){
         orders4.push(order)
-      }else if(orders4.find(elt => elt.id === order.id)){
-        newT = orders4.map(m =>{
-          if(m.id === order.id){
-            return {...order}
-          }else{
-            return {...m}
-          }
-        })
-        orders4 = newT
-
       }
 
-      orders4.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+      //orders4.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime())
       
       const state_2 = { ...state, orders: orders4 }
       console.log('-----------state_', state_2)

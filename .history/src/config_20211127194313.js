@@ -50,23 +50,6 @@ export function request_post(path, body, header){
     )
     return r;
 }
-export function request_patch(path, body, header){
-    const r = fetch(endpoint+path, {
-         method: 'PATCH',
-         headers: {
-          'authorization': !header? 'Bearer '+store.getState().header : null,
-          'Content-Type': 'application/merge-patch+json'
-      },
-      body: JSON.stringify(body)
-    }).then(
-      (response) => response.json()
-    ).then(
-      (responseJson) => {
-        return responseJson;
-      }
-    )
-    return r;
-}
   
 export function request_post_with_picture(path, body, header){
     const r = fetch(endpoint+path, {

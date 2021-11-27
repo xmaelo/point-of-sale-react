@@ -122,7 +122,7 @@ export default function ShopProductCard({ product }) {
               &nbsp;
               FCFA
             </Typography>
-            <OrderMoreMenu order={product} />
+            <OrderMoreMenu />
         </Stack>
       </Stack>
     </Card>
