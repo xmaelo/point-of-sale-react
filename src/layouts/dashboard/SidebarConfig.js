@@ -28,6 +28,11 @@ const sidebarConfig = [
     path: '/dashboard/table',
     icon: getIcon(peopleFill)
   },
+  {
+    title: 'Archive',
+    path: '/dashboard/archive',
+    icon: <Icon icon="eva:archive-outline"  width={22} height={22}/>
+  },
   // {
   //   title: 'product',
   //   path: '/dashboard/products',

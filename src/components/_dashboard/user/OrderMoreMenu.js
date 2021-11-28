@@ -4,17 +4,23 @@ import editFill from '@iconify/icons-eva/edit-fill';
 import { Link as RouterLink } from 'react-router-dom';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
+
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
 import { request_patch, onOrder, request_get } from '../../../config';
 import { useSelector } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
+import printHtmlToPDF from "print-html-to-pdf";
+
+
+import Facture from './Facture';
 
 // ----------------------------------------------------------------------
 
 export default function OrderMoreMenu({order}) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const socket = useSelector(p =>p.socket)
 
@@ -34,10 +40,10 @@ export default function OrderMoreMenu({order}) {
 
   async function patch(task_name){
     try {
+      const task = await onLoadTask(task_name)
       const l = {[task_name]: true}
       setL(l)
-      const task = await onLoadTask(task_name)
-      const res = await request_patch("commandes/"+order.id, {status: task['@id']})
+      const res = await request_patch("commandes/"+order.id, {status: task['@id'], task: task.task_name})
       await socket.send(JSON.stringify(res))
       console.log('res res res patch', res)
       await onOrder(res)
@@ -48,6 +54,7 @@ export default function OrderMoreMenu({order}) {
     }
   }
 
+  
   return (
     <>
       <IconButton ref={ref} onClick={() => setIsOpen(true)}>
@@ -68,7 +75,7 @@ export default function OrderMoreMenu({order}) {
           <ListItemIcon>
           {lond['archive'] ? <CircularProgress  size={20} />
             :
-            <Icon icon={trash2Outline} width={24} height={24} />
+            <Icon icon="eva:archive-outline"  width={24} height={24}/>
           }
           </ListItemIcon>
           <ListItemText primary="Archiver" primaryTypographyProps={{ variant: 'body2' }} />
@@ -78,19 +85,32 @@ export default function OrderMoreMenu({order}) {
           <ListItemIcon>
           {lond['livre'] ? <CircularProgress  size={20} />
             :
-            <Icon icon={editFill} width={24} height={24} />
+            <Icon icon="eva:list-outline" width={24} height={24} />
           }
           </ListItemIcon>
           <ListItemText primary="Pret a livrer" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
+        {order?.status.task_name !== "archive"&&
+          <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }} onClick={()=>patch('annuler')}>
+            <ListItemIcon>
+            {lond['annuler'] ? <CircularProgress  size={20} />
+              :
+              <Icon icon={trash2Outline} width={24} height={24} />
+            }
+            </ListItemIcon>
+            <ListItemText primary="Annuler" primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+        }
 
-        <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
+        <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }} onClick={()=>setOpen(true)}>
           <ListItemIcon>
-            <Icon icon={editFill} width={24} height={24} />
+            <Icon icon="eva:printer-outline" width={24} height={24}/>
           </ListItemIcon>
-          <ListItemText primary="Imprimer la facture" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary="Voir la facture" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
+          <Facture open={open} setOpen={setOpen} order={order}/>
       </Menu>
+      
     </>
   );
 }

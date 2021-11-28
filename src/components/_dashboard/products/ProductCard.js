@@ -73,7 +73,7 @@ export default function ShopProductCard({ product }) {
         {status && (
           <Label
             variant="filled"
-            color={(status === 'sale' && 'error') || 'info'}
+            color={(status.task_name === 'annuler' && 'error') || (status.task_name === 'livre' && 'success') || 'info'}
             sx={{
               zIndex: 9,
               top: 16,

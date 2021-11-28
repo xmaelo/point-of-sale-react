@@ -102,7 +102,7 @@ function Form(props) {
                 <br/>
                 <TextField 
                   id="outlined-basic" 
-                  label="Nom" 
+                  label="Numero" 
                   variant="outlined" 
                   style={{width: '47%'}} 
                   value={name}
@@ -313,7 +313,7 @@ export default function User() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {!tableLoad && tables.reverse()
+                  {!tableLoad && tables.sort()
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
                       const { id, name, role, status, capacity, avatarUrl, isVerified } = row;

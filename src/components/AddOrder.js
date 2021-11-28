@@ -141,6 +141,7 @@ export default function AddOrder(props) {
 
   async function onSaveCommande(){
     try {
+      console.log('started saving')
       const now = new Date()
       const obx = {
           table: table,
@@ -149,9 +150,12 @@ export default function AddOrder(props) {
           time: new Date().toISOString(),
           random: Math.floor(Math.random() * 5000)+"_"+now.getTime(),
           quantity: parseInt(plateQuantity),
-          price: renderPrice()
+          price: renderPrice(),
+          task: status.task_name
       }
       setDisabled(true)
+
+      console.log('obx after pos ****************', obx)
       const result = await request_post("commandes", obx)
       const r = await socket.send(JSON.stringify(obx));
       //await dispatch({type: "NEW_ORDER", random: obx.random})
@@ -266,8 +270,8 @@ export default function AddOrder(props) {
                                     <TextField
                                         {...params}
                                         variant="outlined"
-                                        label="Multiple values"
-                                        placeholder="Favorites"
+                                        label="Selection des consommables"
+                                        placeholder="Consommables"
                                     />
                                     )}
                                 />

@@ -37,7 +37,7 @@ export default function store(state = defaultState, action) {
       }
       
       ordersSlice.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
-      const state_ = { ...state, orders: ordersSlice }
+      const state_ = { ...state, orders: [...ordersSlice.filter(a => a.status?.task_name !=="archive")] }
       return state_;
     case 'NEW_ORDER':
       const order = action.order
@@ -62,7 +62,7 @@ export default function store(state = defaultState, action) {
 
       orders4.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
       
-      const state_2 = { ...state, orders: orders4 }
+      const state_2 = { ...state, orders: [...orders4.filter(a => a.status?.task_name !=="archive")] }
       console.log('-----------state_', state_2)
       return { ...state_2};
          

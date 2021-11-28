@@ -6,13 +6,52 @@ import { Link as RouterLink } from 'react-router-dom';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 // material
+import {request_delete, request_patch} from '../../../config'
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // ----------------------------------------------------------------------
 
-export default function UserMoreMenu() {
+export default function UserMoreMenu(props) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [lond, setT] = useState({});
+
+  async function onDelete(t) {
+    try {
+      if(!window.confirm("Attention! Il se peut qu'ils aient des commandes associées a ce consommable. Souhaitez vous vraiment effacer ?")){
+        return
+      }
+      const tx = {[t]: true}
+      setT(tx)
+      const res = await request_delete('consommables/'+props.id)
+      if(!res){
+        return
+      }
+      setT({})
+      setIsOpen(false)
+      props.onReload()
+    } catch (error) {
+      console.log('error deleting', error)
+    }
+  }
+  async function onActive(t) {
+    try {
+      const tx = {[t]: true}
+      setT(tx)
+      const res = await request_patch('consommables/'+props.id, {activated: false})
+      console.log('res res res res', res)
+      if(!res){
+        return
+      }
+      setT({})
+      setIsOpen(false)
+      props.onReload()
+    } catch (error) {
+      console.log('error deleting', error)
+    }
+  }
+
 
   return (
     <>
@@ -30,24 +69,24 @@ export default function UserMoreMenu() {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }}>
+        <MenuItem sx={{ color: 'text.secondary' }} onClick={() => onDelete('effacer')}>
           <ListItemIcon>
-            <Icon icon={trash2Outline} width={24} height={24} />
+          {lond['effacer'] ? <CircularProgress  size={20} />
+              :
+              <Icon icon={trash2Outline} width={24} height={24} />
+            }
           </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary="Effacer" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
+        <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }} onClick={() => onActive('activate')}>
           <ListItemIcon>
-            <Icon icon={editFill} width={24} height={24} />
-          </ListItemIcon>
-          <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
-        <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
-          <ListItemIcon>
+          {lond['activate'] ? <CircularProgress  size={20} />
+              :
             <Icon icon={radioButtonOnFill} width={24} height={24} />
+          }
           </ListItemIcon>
-          <ListItemText primary="Activer" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary={!props.row?.activated? "Activer" : "Desactiver"} primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
       </Menu>
     </>

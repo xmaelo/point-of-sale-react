@@ -13,6 +13,7 @@ import Blog from './pages/Blog';
 import Table from './pages/Table';
 import NotFound from './pages/Page404';
 import Menu from './pages/Menu';
+import OrderArchive from './pages/OrderArchive';
 
 // ----------------------------------------------------------------------
 
@@ -28,7 +29,8 @@ export default function Router() {
         { path: 'table', element: auth ? <Table />: <Navigate to="/login" /> },
         { path: 'products', element: auth ?<Products /> : <Navigate to="/login" /> },
         { path: 'order', element: auth ?<Order /> : <Navigate to="/login" /> },
-        { path: 'blog', element: auth ? <Blog /> : <Navigate to="/login" /> }
+        { path: 'blog', element: auth ? <Blog /> : <Navigate to="/login" /> },
+        { path: 'archive', element: auth ? <OrderArchive /> : <Navigate to="/login" /> }
       ]
     },
     {

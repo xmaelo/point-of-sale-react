@@ -27,7 +27,7 @@ import {
 // components
 import Page from '../components/Page';
 import Label from '../components/Label';
-import Scrollbar from '../components/Scrollbar';
+import Scrollbar from '../components/Scrollbar'; 
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 import TextField from '@mui/material/TextField';
@@ -41,6 +41,7 @@ import Collapse from '@mui/material/Collapse';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 
+import {request_delete} from '../config'
 
 import USERLIST from '../_mocks_/user';
 import { useDispatch, useSelector } from 'react-redux';
@@ -76,6 +77,8 @@ function Form(props) {
     React.useEffect(function(){
       onGetTypeCOnsommable()
     }, [])
+
+    
 
 
     async function onGetTypeCOnsommable(){
@@ -290,7 +293,6 @@ export default function Menu() {
     }
   }
 
-
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -392,11 +394,11 @@ export default function Menu() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {!tableLoad && tables.reverse()
+                  {!tableLoad && tables.sort()
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
                       const { id, name, activated, price, picture, description, typeConsommable } = row;
-                      const isItemSelected = selected.indexOf(name) !== -1;
+                      const isItemSelected = selected.indexOf(id) !== -1;
 
                       return (
                         <TableRow
@@ -434,7 +436,7 @@ export default function Menu() {
                           </TableCell>
 
                           <TableCell align="right">
-                            <UserMoreMenu />
+                            <UserMoreMenu onReload={onReload} id={id}  row={row}/>
                           </TableCell>
                         </TableRow>
                       );

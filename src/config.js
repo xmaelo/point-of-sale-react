@@ -1,12 +1,12 @@
 import store from './reducer'
 
-//const url ="http://restau.gh-raphia.net/php-websocket-app/public/"
-//export const endpoint = url
-//export const imageBase = url+"uploads/"
-
-const url = "http://localhost:8000/"
-export const imageBase = url+"uploads/"
+const url ="http://restau.gh-raphia.net/php-websocket-app/public/"
 export const endpoint = url+"api/"
+export const imageBase = url+"uploads/"
+
+// const url = "http://localhost:8000/"
+// export const imageBase = url+"uploads/"
+// export const endpoint = url+"api/"
 
 
 
@@ -22,6 +22,23 @@ function request_get1(path, header){
       }
     }).then(
       (response) => response.json()
+    ).then(
+      (responseJson) => {
+        return responseJson;
+      }
+    )
+    return r;
+}
+export function request_delete(path, header){
+
+    const r = fetch(endpoint+path, {
+         method: 'DELETE',
+         headers: {
+           'authorization': !header ? store.getState().header : header,
+           'Content-Type': 'application/json'
+      }
+    }).then(
+      (response) => true
     ).then(
       (responseJson) => {
         return responseJson;
@@ -50,6 +67,7 @@ export function request_post(path, body, header){
     )
     return r;
 }
+
 export function request_patch(path, body, header){
     const r = fetch(endpoint+path, {
          method: 'PATCH',
