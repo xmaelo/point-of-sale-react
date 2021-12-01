@@ -46,10 +46,10 @@ import { useDispatch, useSelector } from 'react-redux';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Nom', alignRight: false },
+  { id: 'name', label: 'Code', alignRight: false },
   { id: 'Capacité', label: 'Capcité', alignRight: false },
-  { id: 'status', label: 'Statut', alignRight: false },
-  { id: '' }
+  // { id: 'status', label: 'Statut', alignRight: false },
+  // { id: '' }
 ];
 
 // ----------------------------------------------------------------------
@@ -343,7 +343,7 @@ export default function User() {
                             </Stack>
                           </TableCell>
                           <TableCell align="left">{capacity}</TableCell>
-                          <TableCell align="left">
+                          {/* <TableCell align="left">
                             <Label
                               variant="ghost"
                               color={(status === 'banned' && 'error') || 'success'}
@@ -352,11 +352,11 @@ export default function User() {
                               // sentenceCase(status)
                               }
                             </Label>
-                          </TableCell>
+                          </TableCell> */}
 
-                          <TableCell align="right">
+                          {/* <TableCell align="right">
                             <UserMoreMenu />
-                          </TableCell>
+                          </TableCell> */}
                         </TableRow>
                       );
                     })}

@@ -26,6 +26,9 @@ export default function Facture(props) {
   const handleClose = () => props.setOpen(false);
   const consommabes = props.order?.consommabes
 
+  const product = props.order
+  const object =  product.object ? JSON.parse(product.object) : {}
+
   async function onPrint(){
     const node = window.document.getElementById("print-me")
 
@@ -79,7 +82,7 @@ export default function Facture(props) {
                         {consommabes&&consommabes.map((c, i) => 
                         <div key={c.id}>
                             <span >{"- "+c.name} </span>
-                            <span style={{float: "right"}}>{"1X "+c.price+ " FCFA"} </span>
+                            <span style={{float: "right"}}>{(object[c.id] ? object[c.id] : '1')+" X "+c.price+ " FCFA"} </span>
                         </div>
                         )}
                     </Typography>

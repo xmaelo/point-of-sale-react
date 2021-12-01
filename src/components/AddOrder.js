@@ -56,6 +56,7 @@ export default function AddOrder(props) {
     const [plateQuantity, setPlat] = React.useState(1);
     const [status, setStatus] = React.useState(null);
     const [loanding, setDisabled] = React.useState(false);
+    const [objQ, setObjq] = React.useState({});
 
     const consommables = useSelector(p => p.consommables)
     const tables = useSelector(p => p.tables)
@@ -141,7 +142,8 @@ export default function AddOrder(props) {
 
   async function onSaveCommande(){
     try {
-      console.log('started saving')
+      console.log('started saving', objQ, JSON.stringify(objQ))
+      
       const now = new Date()
       const obx = {
           table: table,
@@ -151,7 +153,8 @@ export default function AddOrder(props) {
           random: Math.floor(Math.random() * 5000)+"_"+now.getTime(),
           quantity: parseInt(plateQuantity),
           price: renderPrice(),
-          task: status.task_name
+          task: status.task_name,
+          object: JSON.stringify(objQ)
       }
       setDisabled(true)
 
@@ -191,6 +194,10 @@ export default function AddOrder(props) {
         if(t.id === id) return {...t, quantity: quantity}
         return t
     }))
+
+    const v = objQ
+    v[id] = quantity
+    setObjq(v)
 
   }
 

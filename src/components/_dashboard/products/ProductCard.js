@@ -40,16 +40,19 @@ ShopProductCard.propTypes = {
 export default function ShopProductCard({ product }) {
   const { cover, consommabes, status, quantity, price } = product;
 
+  const object =  product.object ? JSON.parse(product.object) : {}
+
+
   const [showMore, setShowMore] = React.useState(false)
   let name = ""
   let description = ""
   console.log('consommabes&consommabes[0].picture', consommabes)
   consommabes&& consommabes.map(c => {
     if(name === ""){
-      name = c.name
+      name = c.name + (' ('+ (object[c.id] ? 'X '+object[c.id] : 'X 1')+')')
       description = c.description
     }else{
-      name = name + " + " +c.name
+      name = name + " + " +c.name + (' ('+ (object[c.id] ? 'X '+object[c.id] : 'X 1')+')')
       description = description + "\n" +c.description
     }
   })
@@ -58,7 +61,7 @@ export default function ShopProductCard({ product }) {
     return(
       <Typography>
         {consommabes&&consommabes.map((c, i) => 
-           <span key={c.id}>{(i+1)+": "+c.description} <br/> </span>
+           <span key={c.id}>{"- "+c.description} <br/> </span>
         )}
         {consommabes.length > 1 &&
             <span onClick={() =>setShowMore(!showMore)} style={{color: "blue", cursor: 'pointer'}} >Voir moins</span>
@@ -95,7 +98,7 @@ export default function ShopProductCard({ product }) {
         </Typography>
         {!showMore?
           <Typography>
-            {consommabes&&consommabes.length>0&&consommabes[0].description}
+            {consommabes&&consommabes.length>0&&'- '+consommabes[0].description}
             <br/>
             {consommabes.length > 1 &&
               <span onClick={() =>setShowMore(!showMore)} style={{color: "blue", cursor: 'pointer'}} >Voir plus</span>

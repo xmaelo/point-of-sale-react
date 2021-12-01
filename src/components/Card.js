@@ -27,13 +27,13 @@ export default function Card({row, changedQ}) {
                 </p>
                 <div>
                     <br/>
-                    {/* Quantité: 
+                    Quantité: 
                     <input
                         type="number"
                         label="Quantité"
                         value={row.quantity}
                         onChange={(e)=>onCh(e, row.id)}
-                    /> */}
+                    />
                 </div>
             </div>
         </div>
