@@ -1,6 +1,5 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
-import TextField from '@mui/material/TextField';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 // material
@@ -23,10 +22,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import MobileDatePicker from '@mui/lab/MobileDatePicker';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { useSelector } from 'react-redux';
+import { getOverlappingDaysInIntervals } from 'date-fns';
 // ----------------------------------------------------------------------
 
 const SORT_OPTIONS = [
@@ -45,15 +41,6 @@ export default function Bilan(props) {
     const [periode, setP] = useState("")
     const [loanding, setLoading] = useState(false)
 
-    const commission = useSelector(p =>p.commission)
-
-    const [value, setValue] = React.useState(new Date());
-
-    const handleChangeDate = (newValue) => {
-      setValue(newValue);
-      handleChange()
-    };
-
     function getMonday(d) {
         d = new Date(d);
         const day = d.getDay(),
@@ -64,51 +51,35 @@ export default function Bilan(props) {
     
 
     const handleChange = (event) => {
-        let s;
-        if(event){
-          setP(event.target.value);
-          s = event.target.value
-        }else{
-          s = periode
-        }
+        setP(event.target.value);
+        const s = event.target.value
         if(s === "auj"){
-            const event = value;
-            const event2 = value;
-            console.log('timstamp1', event.toISOString())
+            const event = new Date();
+            console.log('timstamp1', event.getTime())
             event.setHours(0, 0, 0);
-            event2.setHours(23, 59, 59);
-            console.log('timstamp1', event.toISOString())
-            const constraint = "time[after]="+event.toISOString().split('T')[0]+"&time[before]="+event2.toISOString()
+            console.log('timstamp1', event.getTime())
+            const constraint = "timestamp[gte]="+event.getTime()
             return onLoadTyeOnWait(constraint)
         }
         if(s === "sem"){
-            const event = new Date(value);
-        
-            // const event = value;
-            // const firstDay = getMonday(event)
-            // console.log('timstamp1', firstDay.toISOString())
-            // firstDay.setHours(0, 0, 0);
-            // console.log('timstamp1', firstDay.toISOString())
-            const startDate = new Date(event.setDate(event.getDate() - event.getDay()+ (event.getDay() == 0 ? -6:1) ))
-            const endDate = new Date(event.setDate(event.getDate() - (event.getDay() == 0 ? 7 : event.getDay()) + 7))
-
-            console.log('startDate startDate', new Date(startDate).toISOString().split('T')[0], new Date())
-            endDate.setHours(23, 59, 59);
-            const constraint = "time[after]="+new Date(startDate).toISOString().split('T')[0]+"&time[before]="+new Date(endDate).toISOString()
+            const event = new Date();
+            const firstDay = getMonday(event)
+            console.log('timstamp1', firstDay.getTime())
+            firstDay.setHours(0, 0, 0);
+            console.log('timstamp1', firstDay.getTime())
+            const constraint = "timestamp[gte]="+firstDay.getTime()
             return onLoadTyeOnWait(constraint)
         }
         if(s === "mois"){
-            const date = value, y = date.getFullYear(), m = date.getMonth();
+            const date = new Date(), y = date.getFullYear(), m = date.getMonth();
             const firstDay = new Date(y, m, 1);
-            //const lastDay = new Date(y, m + 1, 0);
-
-            const lastdate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            const lastDay = new Date(y, m + 1, 0);
 
 
-            // console.log('timstamp1', firstDay.toISOString())
-            lastdate.setHours(23, 59, 59);
-            // console.log('timstamp1', firstDay.toISOString())
-            const constraint = "time[after]="+firstDay.toISOString().split('T')[0]+"&time[before]="+lastdate.toISOString()
+            console.log('timstamp1', firstDay.getTime())
+            firstDay.setHours(0, 0, 0);
+            console.log('timstamp1', firstDay.getTime())
+            const constraint = "timestamp[gte]="+firstDay.getTime()
             return onLoadTyeOnWait(constraint)
         }
     };
@@ -124,7 +95,6 @@ export default function Bilan(props) {
     async function onLoadTyeOnWait(contranit){
         try {
             setLoading(true)
-            console.log('constraint constraint constraint', contranit)
           const result =  await request_get('commandes?user.username='+username+"&status.task_name=encaisse&"+contranit)
           if(result&&result['hydra:member']){
             setOrder(result['hydra:member'])
@@ -152,25 +122,13 @@ export default function Bilan(props) {
 
             <Grid item xs={12} sm={3} md={3}>
                 <Typography variant="h4" gutterBottom>
-                Statistiques <Tooltip title="Selectionner une date dans le picker et calculer la semaine où le mois correspondant">
-                      <Icon icon="mdi:help" />
-                    </Tooltip>
+                Statistiques
                 </Typography>
                 <Card style={{padding: '10px'}}>
 
-                    
-                    <br/>
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                      <MobileDatePicker
-                        label="Date mobile"
-                        inputFormat="MM/dd/yyyy"
-                        value={value}
-                        onChange={handleChangeDate}
-                        renderInput={(params) => <TextField {...params} />}
-                      />
-
-                    </LocalizationProvider>
-
+                    <Tooltip title="Delete">
+                      <Icon icon="mdi:help" />
+                    </Tooltip>
                     <FormControl
                         style={{width: '90%',  marginTop: 15}}
                     >
@@ -182,9 +140,9 @@ export default function Bilan(props) {
                         label="Période"
                         onChange={handleChange}
                         >
-                            <MenuItem value="auj">Cet Jour </MenuItem>
-                            <MenuItem value="sem"> Cette Semaine</MenuItem>
-                            <MenuItem value="mois"> Ce Mois </MenuItem>
+                            <MenuItem value="auj">Aujourd'hui </MenuItem>
+                            <MenuItem value="sem"> Cette semaine</MenuItem>
+                            <MenuItem value="mois"> Ce mois </MenuItem>
                             
                         </Select>
                     </FormControl>
@@ -196,7 +154,7 @@ export default function Bilan(props) {
                     </span>
                     <br/>
                     <span style={{fontSize: "14px", fontWeight: 'bold'}}>
-                        Commission: {(renerPrice() * commission)/100} FCFA
+                        Commission: {(renerPrice() * 0.1)} FCFA
                     </span>
                 </Card>
             </Grid>

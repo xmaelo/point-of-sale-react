@@ -76,7 +76,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
     sidebarConfig.push(
       {
         title: 'Mon Bilan',
-        path: '/dashboard/bilan/'+user.username,
+        path: '/dashboard/bilan/'+user.role?.task_name,
         icon: <Icon icon="mdi:chart-bell-curve"  width={22} height={22}/>
       }
     )

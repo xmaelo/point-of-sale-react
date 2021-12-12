@@ -26,7 +26,6 @@ import Select from '@mui/material/Select';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { useSelector } from 'react-redux';
 // ----------------------------------------------------------------------
 
 const SORT_OPTIONS = [
@@ -44,8 +43,6 @@ export default function Bilan(props) {
     const [orders, setOrder] = useState([])
     const [periode, setP] = useState("")
     const [loanding, setLoading] = useState(false)
-
-    const commission = useSelector(p =>p.commission)
 
     const [value, setValue] = React.useState(new Date());
 
@@ -78,7 +75,7 @@ export default function Bilan(props) {
             event.setHours(0, 0, 0);
             event2.setHours(23, 59, 59);
             console.log('timstamp1', event.toISOString())
-            const constraint = "time[after]="+event.toISOString().split('T')[0]+"&time[before]="+event2.toISOString()
+            const constraint = "time[after]="+event.toISOString().split('T')[0]+"&time[before]="+event2.toISOString().split('T')[0]
             return onLoadTyeOnWait(constraint)
         }
         if(s === "sem"){
@@ -93,8 +90,7 @@ export default function Bilan(props) {
             const endDate = new Date(event.setDate(event.getDate() - (event.getDay() == 0 ? 7 : event.getDay()) + 7))
 
             console.log('startDate startDate', new Date(startDate).toISOString().split('T')[0], new Date())
-            endDate.setHours(23, 59, 59);
-            const constraint = "time[after]="+new Date(startDate).toISOString().split('T')[0]+"&time[before]="+new Date(endDate).toISOString()
+            const constraint = "time[after]="+new Date(startDate).toISOString().split('T')[0]+"&time[before]="+new Date(endDate).toISOString().split('T')[0]
             return onLoadTyeOnWait(constraint)
         }
         if(s === "mois"){
@@ -106,9 +102,9 @@ export default function Bilan(props) {
 
 
             // console.log('timstamp1', firstDay.toISOString())
-            lastdate.setHours(23, 59, 59);
+            // firstDay.setHours(0, 0, 0);
             // console.log('timstamp1', firstDay.toISOString())
-            const constraint = "time[after]="+firstDay.toISOString().split('T')[0]+"&time[before]="+lastdate.toISOString()
+            const constraint = "time[after]="+firstDay.toISOString().split('T')[0]+"&time[before]="+lastdate.toISOString().split('T')[0]
             return onLoadTyeOnWait(constraint)
         }
     };
@@ -152,7 +148,7 @@ export default function Bilan(props) {
 
             <Grid item xs={12} sm={3} md={3}>
                 <Typography variant="h4" gutterBottom>
-                Statistiques <Tooltip title="Selectionner une date dans le picker et calculer la semaine où le mois correspondant">
+                Statistiques <Tooltip title="Selectionner une date dans le picker et calculer la semaine où mois correspondante">
                       <Icon icon="mdi:help" />
                     </Tooltip>
                 </Typography>
@@ -196,7 +192,7 @@ export default function Bilan(props) {
                     </span>
                     <br/>
                     <span style={{fontSize: "14px", fontWeight: 'bold'}}>
-                        Commission: {(renerPrice() * commission)/100} FCFA
+                        Commission: {(renerPrice() * 0.1)} FCFA
                     </span>
                 </Card>
             </Grid>

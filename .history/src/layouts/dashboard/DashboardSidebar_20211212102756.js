@@ -71,15 +71,15 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         }
       )
     }
-  }
-  if(user.role && user.role.task_name !=="admin" && !sidebarConfig.find(a =>a.title === "Mon Bilan")){
-    sidebarConfig.push(
-      {
-        title: 'Mon Bilan',
-        path: '/dashboard/bilan/'+user.username,
-        icon: <Icon icon="mdi:chart-bell-curve"  width={22} height={22}/>
-      }
-    )
+    if(user.role && user.role.task_name !=="admin" && !sidebarConfig.find(a =>a.title === "Mon Bilan")){
+      sidebarConfig.push(
+        {
+          title: 'Mon Bilan',
+          path: '/dashboard/bilan/'+user.role?.task_name,
+          icon: <Icon icon="mdi:chart-bell-curve"  width={22} height={22}/>
+        }
+      )
+    }
   }
   //mdi:chart-bell-curve
 

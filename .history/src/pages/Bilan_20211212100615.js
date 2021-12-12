@@ -78,7 +78,7 @@ export default function Bilan(props) {
             event.setHours(0, 0, 0);
             event2.setHours(23, 59, 59);
             console.log('timstamp1', event.toISOString())
-            const constraint = "time[after]="+event.toISOString().split('T')[0]+"&time[before]="+event2.toISOString()
+            const constraint = "time[after]="+event.toISOString().split('T')[0]+"&time[before]="+event2.toISOString().split('T')[0]
             return onLoadTyeOnWait(constraint)
         }
         if(s === "sem"){
@@ -93,8 +93,7 @@ export default function Bilan(props) {
             const endDate = new Date(event.setDate(event.getDate() - (event.getDay() == 0 ? 7 : event.getDay()) + 7))
 
             console.log('startDate startDate', new Date(startDate).toISOString().split('T')[0], new Date())
-            endDate.setHours(23, 59, 59);
-            const constraint = "time[after]="+new Date(startDate).toISOString().split('T')[0]+"&time[before]="+new Date(endDate).toISOString()
+            const constraint = "time[after]="+new Date(startDate).toISOString().split('T')[0]+"&time[before]="+new Date(endDate).toISOString().split('T')[0]
             return onLoadTyeOnWait(constraint)
         }
         if(s === "mois"){
@@ -106,9 +105,9 @@ export default function Bilan(props) {
 
 
             // console.log('timstamp1', firstDay.toISOString())
-            lastdate.setHours(23, 59, 59);
+            // firstDay.setHours(0, 0, 0);
             // console.log('timstamp1', firstDay.toISOString())
-            const constraint = "time[after]="+firstDay.toISOString().split('T')[0]+"&time[before]="+lastdate.toISOString()
+            const constraint = "time[after]="+firstDay.toISOString().split('T')[0]+"&time[before]="+lastdate.toISOString().split('T')[0]
             return onLoadTyeOnWait(constraint)
         }
     };

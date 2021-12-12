@@ -1,0 +1,68 @@
+import * as React from 'react';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { Icon } from '@iconify/react';
+import { request_get } from '../../config';
+import { useDispatch } from 'react-redux';
+
+export default function Dialog1() {
+  const [open, setOpen] = React.useState(false);
+
+  const dispatch = useDispatch()
+  React.useEffect(function(){
+    onlastTaux()
+  }, [])
+
+  async function onlastTaux(){
+    try {
+      const result = await request_get('configs')
+      console.log('result result result result result', result)
+      if(result&&result['hydra:member']&&result['hydra:member'].length > 0){
+        dispatch({type: 'SAVE_COM', commission: result['hydra:member'][0].commission})
+      }
+    } catch (error) {
+      console.log('errrrorrr', error)
+    }
+  }
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <div>
+      <Icon icon="mdi:cog-refresh-outline"  width={36} height={36} onClick={handleClickOpen}/>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Config</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Redifinition du taux de Commission
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            type="number"
+            label="Taux"
+            type="email"
+            fullWidth
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleClose}>Sauvegarder</Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+}

@@ -5,10 +5,10 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
 // components
-import Dialog1 from './Dialog1';
 import Logo from '../../components/Logo';
 import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
+import Dialog1 from './Dialog1';
 import { MHidden } from '../../components/@material-extend';
 //
 import sidebarConfig from './SidebarConfig';
@@ -48,17 +48,14 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
 
   const user = useSelector(p =>p.user)
 
-
   const admin = useSelector(p => p.role && p.role.task_name &&  p.role.task_name === 'admin') 
-
-  console.log(' user.role.task_name  user.role.task_name  user.role.task_name',  user.role.task_name)
   if(admin){
     if(!sidebarConfig.find(a =>a.title === "User")){
       sidebarConfig.push(
         {
           title: 'User',
           path: '/dashboard/users',
-          icon: <Icon icon="mdi:account-key"  width={22} height={22}/>
+          icon: <Icon icon="eva:archive-outline"  width={22} height={22}/>
         }
       )
     }
@@ -67,21 +64,20 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         {
           title: 'Archive',
           path: '/dashboard/archive',
-          icon: <Icon icon="mdi:sd"  width={22} height={22}/>
+          icon: <Icon icon="eva:archive-outline"  width={22} height={22}/>
+        }
+      )
+    }
+    if(!sidebarConfig.find(a =>a.title === "Statistique")){
+      sidebarConfig.push(
+        {
+          title: 'Statistique',
+          path: '/dashboard/stats',
+          icon: <Icon icon="eva:archive-outline"  width={22} height={22}/>
         }
       )
     }
   }
-  if(user.role && user.role.task_name !=="admin" && !sidebarConfig.find(a =>a.title === "Mon Bilan")){
-    sidebarConfig.push(
-      {
-        title: 'Mon Bilan',
-        path: '/dashboard/bilan/'+user.username,
-        icon: <Icon icon="mdi:chart-bell-curve"  width={22} height={22}/>
-      }
-    )
-  }
-  //mdi:chart-bell-curve
 
   console.log('V user user user user user', user)
   useEffect(() => {
@@ -116,13 +112,11 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
                 {account.role}
               </Typography>
             </Box>
-            {admin &&
-              <Dialog1 />
-            }
           </AccountStyle>
         </Link>
       </Box>
 
+      <Dialog1 />
       <NavSection navConfig={sidebarConfig} />
 
       <Box sx={{ flexGrow: 1 }} />

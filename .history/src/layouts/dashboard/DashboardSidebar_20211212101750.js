@@ -50,8 +50,6 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
 
 
   const admin = useSelector(p => p.role && p.role.task_name &&  p.role.task_name === 'admin') 
-
-  console.log(' user.role.task_name  user.role.task_name  user.role.task_name',  user.role.task_name)
   if(admin){
     if(!sidebarConfig.find(a =>a.title === "User")){
       sidebarConfig.push(
@@ -71,15 +69,15 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         }
       )
     }
-  }
-  if(user.role && user.role.task_name !=="admin" && !sidebarConfig.find(a =>a.title === "Mon Bilan")){
-    sidebarConfig.push(
-      {
-        title: 'Mon Bilan',
-        path: '/dashboard/bilan/'+user.username,
-        icon: <Icon icon="mdi:chart-bell-curve"  width={22} height={22}/>
-      }
-    )
+    if(user.role && user.role.task_name !=="admin" && !sidebarConfig.find(a =>a.title === "Mon Bilan")){
+      sidebarConfig.push(
+        {
+          title: 'Mon Bilan',
+          path: '/dashboard/bilan/'+user.role?.task_name,
+          icon: <Icon icon="mdi:chart-bell-curve"  width={22} height={22}/>
+        }
+      )
+    }
   }
   //mdi:chart-bell-curve
 
