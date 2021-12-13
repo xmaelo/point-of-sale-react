@@ -100,7 +100,7 @@ function Form(props) {
   async function onSaveTable(){
     try {
       setLoand(true)
-      const obx = {name: name, password: pass, email: username, username: username, role: role, plainPassword: pass}
+      const obx = {name: name, email: username, username: username, role: role,  password: pass}
       console.log('____________TY______________', obx)
       const result = await request_post("users", obx)
       setName('')
