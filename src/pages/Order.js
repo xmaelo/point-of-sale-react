@@ -39,7 +39,7 @@ export default function Order() {
 
   async function onGetOrder(){
     try {
-      const result =  await request_get('commandes')
+      const result =  await request_get('commandes?archived=false')
       if(result&&result['hydra:member']&&result['hydra:member'].length > 0){
         dispatch({type: 'CMD', orders: result['hydra:member']})
       }

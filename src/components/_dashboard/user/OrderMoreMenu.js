@@ -53,6 +53,26 @@ export default function OrderMoreMenu({order}) {
       console.log('error cathing', error)
     }
   }
+  async function onArchive(){
+    try {
+      if(order.status?.task_name !== "encaisse"){
+        if(!window.confirm("La commande va être mise a l'état  encaisé avant d'être archivé")){
+          return
+        }
+        await patch('encaisse')
+      }
+      const l = {'archive': true}
+      setL(l)
+      const res = await request_patch("commandes/"+order.id, {archived: true})
+      await socket.send(JSON.stringify(res))
+      console.log('res res res patch', res)
+      await onOrder(res)
+      setL({})
+      setIsOpen(false)
+    } catch (error) {
+      console.log('error cathing', error)
+    }
+  }
 
   
   return (
@@ -71,7 +91,7 @@ export default function OrderMoreMenu({order}) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }} onClick={()=>patch('archive')}>
+        <MenuItem sx={{ color: 'text.secondary' }} onClick={()=>onArchive()}>
           <ListItemIcon>
           {lond['archive'] ? <CircularProgress  size={20} />
             :
@@ -80,16 +100,17 @@ export default function OrderMoreMenu({order}) {
           </ListItemIcon>
           <ListItemText primary="Archiver" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
-
-        <MenuItem sx={{ color: 'text.secondary' }} onClick={()=>patch('encaisse')}>
-          <ListItemIcon>
-          {lond['encaisse'] ? <CircularProgress  size={20} />
-            :
-            <Icon icon="eva:archive-outline"  width={24} height={24}/>
-          }
-          </ListItemIcon>
-          <ListItemText primary="Encaisser" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
+        {order?.status?.task_name !=="encaisse" &&
+          <MenuItem sx={{ color: 'text.secondary' }} onClick={()=>patch('encaisse')}>
+            <ListItemIcon>
+            {lond['encaisse'] ? <CircularProgress  size={20} />
+              :
+              <Icon icon="eva:archive-outline"  width={24} height={24}/>
+            }
+            </ListItemIcon>
+            <ListItemText primary="Encaisser" primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+        }
 
         <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }} onClick={()=>patch('livre')}>
           <ListItemIcon>
@@ -100,7 +121,7 @@ export default function OrderMoreMenu({order}) {
           </ListItemIcon>
           <ListItemText primary="Pret a livrer" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
-        {order?.status.task_name !== "archive"&&
+        {!order.archived&&
           <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }} onClick={()=>patch('annuler')}>
             <ListItemIcon>
             {lond['annuler'] ? <CircularProgress  size={20} />

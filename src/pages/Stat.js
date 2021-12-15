@@ -53,6 +53,7 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
+    { id: 'id', label: 'No', alignRight: false },
     { id: 'company', label: 'Element', alignRight: false },
     { id: 'name', label: 'Prix', alignRight: false },
     { id: 'date', label: 'Date', alignRight: false },
@@ -220,6 +221,7 @@ export default function Stat({orders, loanding}) {
                               onChange={(event) => handleClick(event, id)}
                             />
                           </TableCell>
+                          <TableCell align="left">{id}</TableCell>
                           <TableCell component="th" scope="row" padding="center">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               {/* <Avatar alt={name} src={avatarUrl} /> */}

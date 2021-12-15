@@ -1,5 +1,9 @@
 import store from './reducer'
 
+// const url ="http://restau.gh-raphia.net/php-websocket-app/public/"
+// export const endpoint = url+"api/"
+// export const imageBase = url+"uploads/"
+
 const url ="http://restau.gh-raphia.net/php-websocket-app/public/"
 export const endpoint = url+"api/"
 export const imageBase = url+"uploads/"

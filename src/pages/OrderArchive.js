@@ -49,6 +49,7 @@ import { imageBase } from '../config';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
+  { id: 'id', label: 'No', alignRight: false },
   { id: 'company', label: 'Element', alignRight: false },
   { id: 'name', label: 'Prix', alignRight: false },
   { id: 'date', label: 'Date', alignRight: false },
@@ -112,7 +113,7 @@ export default function OrderArchive() {
       setShowTable(false)
       setShowHeigh(0)
       setTableLoad(true)
-      const cmds = await request_get('commandes?task=archive')
+      const cmds = await request_get('commandes?archived=true')
       console.log('cmds cmds cmds cmds cmds', cmds)
       setTableLoad(false)
       if(cmds&&cmds['hydra:member']){
@@ -237,6 +238,7 @@ export default function OrderArchive() {
                               onChange={(event) => handleClick(event, id)}
                             />
                           </TableCell>
+                          <TableCell align="left">{id}</TableCell>
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               {renderTitle(row.consommabes)}

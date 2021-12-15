@@ -158,7 +158,8 @@ export default function AddOrder(props) {
           task: status.task_name,
           object: JSON.stringify(objQ),
           user: user['@id'],
-          user_id: user['@id']
+          user_id: user['@id'],
+          archived: false
         }
       console.log('started saving', obx, JSON.stringify(objQ))
       setDisabled(true)
