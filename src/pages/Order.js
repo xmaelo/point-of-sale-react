@@ -33,6 +33,10 @@ export default function Order() {
 
   console.log('***********************', p)
 
+  const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+
+
   React.useEffect(async function(){
     await onGetOrder()
   }, [])
@@ -52,17 +56,26 @@ export default function Order() {
 
   }
 
-
-  
-
   return (
     <Page title="Commandes">
       <Container>
         <Typography variant="h4" sx={{ mb: 5 }}>
           Liste de Commandes
+
+            <div class="col-md-6 mx-auto">
+            <form>
+              <div class="input-group">
+                  <input type="text" class="form-control dropdown-toggle"  placeholder="Rechercher..." id="top-search" />
+                  <span class="mdi mdi-magnify search-icon"></span>
+                  <button class="input-group-text btn-primary" type="submit">Rechercher</button>
+              </div>
+          </form>
+
+            </div>
+           
           <Fab variant="extended" size="small" color="primary" aria-label="add" style={{float: 'right'}} onClick={() => setOpen(true)} >
             <AddIcon sx={{ mr: 1 }} />
-            Nouvelle commaande
+            Nouvelle commande
           </Fab>
         </Typography>
         <ProductList products={orders} />

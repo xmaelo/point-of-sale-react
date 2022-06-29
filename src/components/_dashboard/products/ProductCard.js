@@ -10,6 +10,8 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import searchFill from '@iconify/icons-eva/search-fill';
+
 
 import {imageBase} from '../../../config'
 
@@ -19,6 +21,14 @@ import ColorPreview from '../../ColorPreview';
 
 import { OrderMoreMenu } from '../user';
 import React from 'react';
+import {
+  Toolbar,
+  Tooltip,
+  IconButton,
+  Icon,
+  OutlinedInput,
+  InputAdornment
+} from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -73,6 +83,20 @@ export default function ShopProductCard({ product }) {
       </Typography>
     ) 
   }
+
+  const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
+    width: 340,
+    transition: theme.transitions.create(['box-shadow', 'width'], {
+      easing: theme.transitions.easing.easeInOut,
+      duration: theme.transitions.duration.shorter
+    }),
+    '&.Mui-focused': { width: 320, boxShadow: theme.customShadows.z8 },
+    '& fieldset': {
+      borderWidth: `1px !important`,
+      borderColor: `${theme.palette.grey[500_32]} !important`
+    }
+  }));
+
   const colors = ['#00AB55']
   return (
     <Card>

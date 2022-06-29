@@ -57,7 +57,7 @@ export default function Historic() {
           Liste de Commandes
           <Fab variant="extended" size="small" color="primary" aria-label="add" style={{float: 'right'}} onClick={() => setOpen(true)} >
             <AddIcon sx={{ mr: 1 }} />
-            Nouvelle commaande
+            Nouvelle commande
           </Fab>
         </Typography>
         <ProductList products={orders} />
