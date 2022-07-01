@@ -27,6 +27,7 @@ import { request_get } from 'src/config';
 
 export default function Order() {
   const [open, setOpen] = useState(false);
+  const [cmds, setOrders] = useState([]);
   const dispatch = useDispatch() 
   const orders = useSelector(p => p.orders)
   const p = useSelector(p => p)
@@ -34,7 +35,6 @@ export default function Order() {
   console.log('***********************', p)
 
   const [search, setSearch] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
 
 
   React.useEffect(async function(){
@@ -45,16 +45,38 @@ export default function Order() {
     try {
       const result =  await request_get('commandes?order[id]=desc')
       if(result&&result['hydra:member']&&result['hydra:member'].length > 0){
-        console.log( "result['hydra:member']", result['hydra:member'])
-        dispatch({type: 'CMD', orders: result['hydra:member']})
-        await onGetOrder()
+        const _orders = result['hydra:member'];
+        dispatch({type: 'CMD', orders: _orders})
+        // await onGetOrder()
+        setOrders(_orders)
       }
     } catch (error) {
       console.log('onLoadTyeOnWait', error)
-      await onGetOrder()
+      // await onGetOrder()
     }
 
   }
+
+  const handleSearch = event => {
+    const value = event.currentTarget.value
+    setSearch(value)
+    const _orders = orders.filter(_order => _order.consommabes.filter(_c => _c.name.includes(value)).length > 0)
+    // dispatch({type: 'CMD', orders: _orders});
+    setOrders(_orders);
+    
+  }
+
+    // const handleSearch = event => {
+  //   setSearch({
+  //     [event.target.name]: event.target.value
+  //   })
+  //   // console.log(setSearch)
+  //   // if (event.target.value) {
+  //   //   // const searchText = event.target.value;
+  //   //   // const ordersCmd = orders.filter(order => order.consommabes.toLowerCase().includes(searchText.toLowerCase()))
+  //   // }
+  // }
+
 
   return (
     <Page title="Commandes">
@@ -63,13 +85,12 @@ export default function Order() {
           Liste de Commandes
 
             <div class="col-md-6 mx-auto">
-            <form>
               <div class="input-group">
-                  <input type="text" class="form-control dropdown-toggle"  placeholder="Rechercher..." id="top-search" />
-                  <span class="mdi mdi-magnify search-icon"></span>
-                  <button class="input-group-text btn-primary" type="submit">Rechercher</button>
+                <div className="input-group mb-3">
+                    <input type="text" onChange={handleSearch} value={search} className="form-control dropdown-toggle" placeholder="Rechercher..." id="top-search" />
+                    <button className="input-group-text btn-primary" type="submit">Rechercher</button>
+                </div>
               </div>
-          </form>
 
             </div>
            
@@ -78,7 +99,7 @@ export default function Order() {
             Nouvelle commande
           </Fab>
         </Typography>
-        <ProductList products={orders} />
+        <ProductList products={cmds} />
       </Container>
       <AddOrder open={open} handleClose={setOpen} />
     </Page>

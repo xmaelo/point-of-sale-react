@@ -10,7 +10,8 @@ const defaultState = {
   orders: [],
   test: false,
   commission: 0,
-  orders_caisse: []
+  orders_caisse: [],
+  searchedCommands:  [],
 };
 
 
@@ -134,8 +135,7 @@ export default function store(state = defaultState, action) {
       
       console.log('orders5 orders5 orders5', orders5)
       const state_22 = { ...state, orders_caisse: [...orders5.filter(a => a.status?.task_name ==="valide")] }
-      return { ...state_22};
-         
+      return { ...state_22}; 
           
     default:
       return state;
