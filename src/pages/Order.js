@@ -22,11 +22,14 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import NavigationIcon from '@mui/icons-material/Navigation';
+
 import { request_get } from 'src/config';
+import Loading from 'src/components/loading/Loading';
 // ----------------------------------------------------------------------
 
 export default function Order() {
   const [open, setOpen] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [cmds, setOrders] = useState([]);
   const dispatch = useDispatch() 
   const orders = useSelector(p => p.orders)
@@ -43,16 +46,20 @@ export default function Order() {
 
   async function onGetOrder(){
     try {
+      setLoading(true);
       const result =  await request_get('commandes?order[id]=desc')
+      setLoading(false)
+
       if(result&&result['hydra:member']&&result['hydra:member'].length > 0){
         const _orders = result['hydra:member'];
         dispatch({type: 'CMD', orders: _orders})
         // await onGetOrder()
-        setOrders(_orders)
+        setOrders(_orders);
       }
     } catch (error) {
       console.log('onLoadTyeOnWait', error)
       // await onGetOrder()
+
     }
 
   }
@@ -99,7 +106,17 @@ export default function Order() {
             Nouvelle commande
           </Fab>
         </Typography>
-        <ProductList products={cmds} />
+        {isLoading && ( <section className="py-5">
+          <div className="container">
+            <div className="row">
+              <div className="col-10 mx-auto col-md-6">
+                <Loading />
+              </div>
+            </div>
+          </div>
+        </section>)}
+
+       {!isLoading &&  <ProductList products={cmds} />}
       </Container>
       <AddOrder open={open} handleClose={setOpen} />
     </Page>
