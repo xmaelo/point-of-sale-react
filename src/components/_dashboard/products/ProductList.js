@@ -10,7 +10,6 @@ import ShopProductCard from './ProductCard';
 
 
 
-
 export default function ProductList({ products, ...other }) {
 
     const [visible, setVisible] = useState(8);
